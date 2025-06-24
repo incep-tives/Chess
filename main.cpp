@@ -124,6 +124,129 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam) {
             InvalidateRect(hwnd, nullptr, TRUE);
             break;
         }
+        case WM_COMMAND:
+    switch (LOWORD(wParam)) {
+    case ID_NEW_GAME:
+        game = ChessGame();
+        promotion.reset();
+        gameOverPopup.result = GameResult::None;
+        InvalidateRect(hwnd, nullptr, TRUE);
+        break;
+    case ID_FILE_CLOSE:
+        PostQuitMessage(0);
+        break;
+    case ID_ABOUT:
+        MessageBoxW(hwnd, L"Chess Game\nby Noctify0", L"About", MB_OK | MB_ICONINFORMATION);
+        break;
+    case ID_SAVE_GAME: {
+        wchar_t fileName[MAX_PATH] = L"";
+        OPENFILENAMEW ofn = { sizeof(ofn) };
+        ofn.hwndOwner = hwnd;
+        ofn.lpstrFilter = L"Chess Files (*.chess)\0*.chess\0";
+        ofn.lpstrFile = fileName;
+        ofn.nMaxFile = MAX_PATH;
+        ofn.Flags = OFN_OVERWRITEPROMPT;
+        ofn.lpstrDefExt = L"chess";
+        if (GetSaveFileNameW(&ofn)) {
+            std::wofstream ofs(fileName);
+            if (!ofs) {
+                MessageBoxW(hwnd, L"Failed to save file.", L"Error", MB_ICONERROR);
+                break;
+            }
+            ofs << (game.whiteTurn ? L"white" : L"black") << L"\n";
+            for (int r = 0; r < 8; ++r) {
+                for (int c = 0; c < 8; ++c) {
+                    const Piece& p = game.board.board[r][c];
+                    if (!p.empty()) {
+                        ofs << L"piece " << r << L" " << c << L" "
+                            << std::wstring(p.name.begin(), p.name.end()) << L" "
+                            << p.value << L"\n";
+                    }
+                }
+            }
+            for (const auto& p : game.board.capturedWhite) {
+                ofs << L"captured_white "
+                    << std::wstring(p.name.begin(), p.name.end()) << L" "
+                    << p.value << L"\n";
+            }
+            for (const auto& p : game.board.capturedBlack) {
+                ofs << L"captured_black "
+                    << std::wstring(p.name.begin(), p.name.end()) << L" "
+                    << p.value << L"\n";
+            }
+            ofs << L"lastmove "
+                << game.lastMoveFromRow << L" " << game.lastMoveFromCol << L" "
+                << game.lastMoveToRow << L" " << game.lastMoveToCol << L"\n";
+            ofs.close();
+            MessageBoxW(hwnd, L"Game saved successfully.", L"", MB_OK | MB_ICONINFORMATION);
+        }
+        break;
+    }
+    case ID_OPEN_GAME: {
+        wchar_t fileName[MAX_PATH] = L"";
+        OPENFILENAMEW ofn = { sizeof(ofn) };
+        ofn.hwndOwner = hwnd;
+        ofn.lpstrFilter = L"Chess Files (*.chess)\0*.chess\0";
+        ofn.lpstrFile = fileName;
+        ofn.nMaxFile = MAX_PATH;
+        ofn.Flags = OFN_FILEMUSTEXIST;
+        ofn.lpstrDefExt = L"chess";
+        if (GetOpenFileNameW(&ofn)) {
+            std::wifstream ifs(fileName);
+            if (!ifs) {
+                MessageBoxW(hwnd, L"Failed to open file.", L"Error", MB_ICONERROR);
+                break;
+            }
+            game = ChessGame();
+            for (int r = 0; r < 8; ++r)
+                for (int c = 0; c < 8; ++c)
+                    game.board.board[r][c] = Piece();
+            promotion.reset();
+            gameOverPopup.result = GameResult::None;
+
+            std::wstring line;
+            while (std::getline(ifs, line)) {
+                std::wistringstream iss(line);
+                std::wstring token;
+                iss >> token;
+                if (token == L"white") {
+                    game.whiteTurn = true;
+                } else if (token == L"black") {
+                    game.whiteTurn = false;
+                } else if (token == L"piece") {
+                    int r, c, value;
+                    std::wstring name;
+                    iss >> r >> c >> name >> value;
+                    std::string sname(name.begin(), name.end());
+                    int color = (sname.find("white") != std::string::npos) ? 1 : 0;
+                    game.board.board[r][c] = Piece(sname, color);
+                    game.board.board[r][c].value = value;
+                } else if (token == L"captured_white") {
+                    std::wstring name;
+                    int value;
+                    iss >> name >> value;
+                    std::string sname(name.begin(), name.end());
+                    game.board.capturedWhite.push_back(Piece(sname, 1));
+                    game.board.capturedWhite.back().value = value;
+                } else if (token == L"captured_black") {
+                    std::wstring name;
+                    int value;
+                    iss >> name >> value;
+                    std::string sname(name.begin(), name.end());
+                    game.board.capturedBlack.push_back(Piece(sname, 0));
+                    game.board.capturedBlack.back().value = value;
+                } else if (token == L"lastmove") {
+                    iss >> game.lastMoveFromRow >> game.lastMoveFromCol >> game.lastMoveToRow >> game.lastMoveToCol;
+                }
+            }
+            ifs.close();
+            InvalidateRect(hwnd, nullptr, TRUE);
+            MessageBoxW(hwnd, L"Game loaded successfully.", L"", MB_OK | MB_ICONINFORMATION);
+        }
+        break;
+    }
+    }
+    break;
         case WM_LBUTTONDOWN: {
             int x = LOWORD(lParam), y = HIWORD(lParam);
             int barHeight = 28;
@@ -541,7 +664,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR, int nCmdShow) {
     int winHeight = rc.bottom - rc.top;
 
     HWND hwnd = CreateWindowEx(
-    0, L"ChessWindow", L"FXChess",
+    0, L"ChessWindow", L"Chess",
     WS_OVERLAPPED | WS_CAPTION | WS_SYSMENU | WS_MINIMIZEBOX | WS_THICKFRAME,
     CW_USEDEFAULT, CW_USEDEFAULT, winWidth, winHeight,
     nullptr, hMenu, hInstance, nullptr
