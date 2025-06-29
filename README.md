@@ -1,32 +1,45 @@
 # Chess
 
-An open-source chess application written in C++. This project features a classic chess game with a built-in Stockfish engine, supporting various modes and adjustable difficulty. It is designed for enthusiasts who want to play against a strong chess engine or experiment with different chess variants.
+**Open Source Chess program**  
+A C++ chess application featuring classic chess rules with a basic GUI and optional integration with the Stockfish engine.
+
+---
 
 ## Features
 
-- **Classic Chess**: Standard chess rules and gameplay.
-- **Chess960 (Fischer Random)**: Play Chess960 for added variety and challenge.
-- **Player vs Player**: Play against another human locally.
-- **Player vs Computer**: Challenge the Stockfish engine at various ELO levels.
-- **Adjustable Difficulty**: Set engine skill or ELO for computer opponents.
-- **Move Legality and Validation**: The engine checks for legal moves, including special rules like en passant, castling, and pawn promotion.
-- **Check Detection**: Visual and logical indication when a king is in check.
-- **Move History**: Track and review move history.
-- **FEN Support**: Position serialization for saving/loading games and engine communication.
-- **UCI Protocol Integration**: Communicates with Stockfish using the UCI protocol.
-- **Promotion Dialog**: GUI for pawn promotion choices.
-- **Customizable Board and Pieces**: Support for custom images for the board and pieces.
-- **Syzygy Tablebase Support**: Endgame tablebase probing for perfect play in simplified positions.
+- **Standard Chess Rules**  
+  Implements classic chess movement and rules, including:
+  - Pawn movement (single/double, captures, en passant)
+  - Castling (kingside and queenside)
+  - Pawn promotion (promotion dialog included)
+  - Check and check detection
+  - Move legality checking
+
+- **Modes**
+  - **Singleplayer vs Stockfish**: Play against a built-in Stockfish engine with selectable difficulty/ELO settings.
+  - **Multiplayer (Local)**: Two players can play on the same computer.
+
+- **Stockfish Engine Integration**
+  - Supports engine ELO/skill adjustment
+  - UCI protocol communication via dynamic loading (`Engine.dll`)
+  - FEN serialization for communicating board state
+
+- **Basic GUI**
+  - Piece and board image customization
+  - Dialogs for selecting color, game mode, and difficulty
+
+---
 
 ## Getting Started
 
 ### Prerequisites
 
-- C++17 or newer compiler (GCC, Clang, MSVC)
-- CMake (for build configuration)
-- Make (optional, for Unix-like systems)
+- C++17 or newer
+- CMake (build system)
+- Make (recommended for UNIX systems)
+- On Windows: Ensure access to `Engine.dll` (Stockfish engine)
 
-### Building
+### Build Instructions
 
 ```sh
 git clone https://github.com/incep-tives/Chess.git
@@ -39,33 +52,42 @@ make
 
 ### Running
 
-After building, run the executable generated in the `build` directory:
+- On UNIX: `./Chess`
+- On Windows: `Chess.exe`
+- For Stockfish support, ensure `Engine.dll` is available in the executable directory.
 
-```sh
-./Chess
-```
-
-### Configuration
-
-- **Engine Strength**: Adjustable via dialogs or configuration settings.
-- **Game Mode**: Choose between Player vs Player, Player vs Computer, or Chess960.
-- **Color Selection**: Select to play as White or Black.
+---
 
 ## Project Structure
 
-- `/game/` – Core chess logic (board, move generation, game state)
-- `/stockfish/` – Integrated Stockfish chess engine sources
-- `main.cpp` – Application entry point and GUI logic
+- `main.cpp` – Main application entry and UI/dialog logic
+- `/game/ChessBoard.{cpp,h}` – Core chessboard and move validation logic
+- `/game/ChessGame.{cpp,h}` – Game state management
+- `/game/StockfishEngine.cpp` – Stockfish engine interface (dynamic loading)
+- `/stockfish/` – Embedded Stockfish sources (for reference and DLL build)
+- CMake/Makefile – Build scripts
+
+---
+
+## Limitations
+
+- **No online play** (local only)
+- **No move history or PGN export** (move list function is a stub)
+- **No save/load games** (FEN support is only partial)
+- **No advanced GUI features** (minimal dialogs only)
+
+---
 
 ## License
 
-This project incorporates Stockfish, which is licensed under the [GNU GPL v3](https://www.gnu.org/licenses/gpl-3.0.html). See `stockfish/` for details.
+- Chess app: MIT or as specified
+- Stockfish: [GNU GPL v3](https://www.gnu.org/licenses/gpl-3.0.html) (see `/stockfish`)
+
+---
 
 ## Credits
 
-- [Stockfish Developers](https://stockfishchess.org/)
-- Chess application by [@incep-tives](https://github.com/incep-tives)
+- Chess app by [@incep-tives](https://github.com/incep-tives)
+- Stockfish by the Stockfish developers
 
-## Contributing
-
-Pull requests and suggestions are welcome! Please open an issue or submit a PR.
+---
