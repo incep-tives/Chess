@@ -49,7 +49,6 @@ void GameOverPopup::checkGameEnd(ChessGame& game) {
             }
         }
     }
-    // Find king position
     int kingRow = -1, kingCol = -1;
     for (int r = 0; r < 8; ++r)
         for (int c = 0; c < 8; ++c) {

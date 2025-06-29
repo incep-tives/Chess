@@ -13,7 +13,6 @@ int ChessBoard::getPieceBaseValue(const std::string& name) {
 }
 
 Piece ChessBoard::fromString(const std::string& s) {
-    // Format: name:value, e.g. "white_queen:1"
     auto pos = s.find(':');
     if (pos == std::string::npos) return Piece(s, getPieceBaseValue(s));
     std::string name = s.substr(0, pos);
@@ -76,7 +75,6 @@ bool ChessBoard::movePiece(int fromRow, int fromCol, int toRow, int toCol, bool 
     auto it = std::find(legalMoves.begin(), legalMoves.end(), std::make_pair(toRow, toCol));
     if (it == legalMoves.end()) return false;
 
-    // En passant
     if (src.name.find("pawn") != std::string::npos && toCol != fromCol && board[toRow][toCol].empty()) {
         int capRow = whiteTurn ? toRow + 1 : toRow - 1;
         Piece capturedPawn = board[capRow][toCol];
@@ -89,7 +87,7 @@ bool ChessBoard::movePiece(int fromRow, int fromCol, int toRow, int toCol, bool 
         board[capRow][toCol] = Piece();
     }
 
-    // Normal capture
+
     if (!board[toRow][toCol].empty()) {
         if (isWhitePiece(board[toRow][toCol]))
             capturedWhite.push_back(board[toRow][toCol]);
@@ -97,7 +95,6 @@ bool ChessBoard::movePiece(int fromRow, int fromCol, int toRow, int toCol, bool 
             capturedBlack.push_back(board[toRow][toCol]);
     }
 
-    // Set en passant target
     if (src.name.find("pawn") != std::string::npos && std::abs(toRow - fromRow) == 2) {
         enPassantRow = (fromRow + toRow) / 2;
         enPassantCol = toCol;
@@ -105,19 +102,17 @@ bool ChessBoard::movePiece(int fromRow, int fromCol, int toRow, int toCol, bool 
         enPassantRow = enPassantCol = -1;
     }
 
-    // Castling
     if (src.name.find("king") != std::string::npos && std::abs(toCol - fromCol) == 2) {
         int homeRow = whiteTurn ? 7 : 0;
-        if (toCol == 6) { // Kingside
+        if (toCol == 6) {
             board[homeRow][5] = board[homeRow][7];
             board[homeRow][7] = Piece();
-        } else if (toCol == 2) { // Queenside
+        } else if (toCol == 2) {
             board[homeRow][3] = board[homeRow][0];
             board[homeRow][0] = Piece();
         }
     }
 
-    // Update movement flags
     if (src.name == "white_king") whiteKingMoved = true;
     if (src.name == "black_king") blackKingMoved = true;
     if (src.name == "white_rook" && fromRow == 7 && fromCol == 0) whiteQueensideRookMoved = true;
@@ -202,7 +197,6 @@ std::vector<std::pair<int, int>> ChessBoard::getLegalMoves(int row, int col, boo
             }
         }
     } else if (piece.name.find("queen") != std::string::npos) {
-        // Rook moves
         for (int dr : {-1, 1}) {
             for (int r = row + dr; r >= 0 && r < 8; r += dr) {
                 if (!board[r][col].empty()) {
@@ -223,7 +217,6 @@ std::vector<std::pair<int, int>> ChessBoard::getLegalMoves(int row, int col, boo
                 moves.emplace_back(row, c);
             }
         }
-        // Bishop moves
         for (int dr : {-1, 1}) for (int dc : {-1, 1}) {
             int r = row + dr, c = col + dc;
             while (r >= 0 && r < 8 && c >= 0 && c < 8) {
@@ -246,13 +239,11 @@ std::vector<std::pair<int, int>> ChessBoard::getLegalMoves(int row, int col, boo
                  (!whiteTurn && isWhitePiece(board[nr][nc]))))
                 moves.emplace_back(nr, nc);
         }
-        // Castling
         int homeRow = whiteTurn ? 7 : 0;
         bool kingMoved = whiteTurn ? whiteKingMoved : blackKingMoved;
         bool kingsideRookMoved = whiteTurn ? whiteKingsideRookMoved : blackKingsideRookMoved;
         bool queensideRookMoved = whiteTurn ? whiteQueensideRookMoved : blackQueensideRookMoved;
 
-        // Kingside castling
         if (!kingMoved && !kingsideRookMoved &&
             board[homeRow][5].empty() && board[homeRow][6].empty() &&
             !isSquareAttacked(homeRow, 4, !whiteTurn) &&
@@ -263,7 +254,6 @@ std::vector<std::pair<int, int>> ChessBoard::getLegalMoves(int row, int col, boo
                 moves.emplace_back(homeRow, 6);
             }
         }
-        // Queenside castling
         if (!kingMoved && !queensideRookMoved &&
             board[homeRow][1].empty() && board[homeRow][2].empty() && board[homeRow][3].empty() &&
             !isSquareAttacked(homeRow, 4, !whiteTurn) &&

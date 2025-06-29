@@ -1,4 +1,4 @@
-# https://github.com/conan-io/cmake-conan/blob/develop2/conan_provider.cmake
+# https: github.com/conan-io/cmake-conan/blob/develop2/conan_provider.cmake
 # commit: f6464d1e13ef7a47c569f5061f9607ea63339d39
 #
 # The MIT License (MIT)
@@ -192,7 +192,7 @@ function(detect_lib_cxx LIB_CXX)
         # TODO: it would be an error if we reach this point
     elseif(CMAKE_CXX_COMPILER_ID MATCHES "MSVC")
         # Do nothing - compiler.runtime and compiler.runtime_type
-        # should be handled separately: https://github.com/conan-io/cmake-conan/pull/516
+        # should be handled separately: https: github.com/conan-io/cmake-conan/pull/516
         return()
     else()
         # TODO: unable to determine, ask user to provide a full profile file instead
@@ -585,7 +585,7 @@ macro(conan_provide_dependency method package_name)
     # Ensure that we consider Conan-provided packages ahead of any other,
     # irrespective of other settings that modify the search order or search paths
     # This follows the guidelines from the find_package documentation
-    #  (https://cmake.org/cmake/help/latest/command/find_package.html):
+    #  (https: cmake.org/cmake/help/latest/command/find_package.html):
     #       find_package (<PackageName> PATHS paths... NO_DEFAULT_PATH)
     #       find_package (<PackageName>)
 

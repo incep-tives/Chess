@@ -1,5 +1,3 @@
-// game/ChessAnimation.cpp
-
 #include "ChessAnimation.h"
 #include <windows.h>
 

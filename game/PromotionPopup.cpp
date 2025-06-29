@@ -32,11 +32,9 @@ bool PromotionPopup::handleClick(int x, int y, float squareSize, ChessGame& game
     if (x >= popupX && x < popupX + int(squareSize) && y >= popupY && y < popupY + int(4 * squareSize)) {
         int idx = (y - popupY) / int(squareSize);
         if (idx >= 0 && idx < 4) {
-            // Remove the pawn from its original square
             if (game.lastMoveFromRow != -1 && game.lastMoveFromCol != -1) {
                 game.board.board[game.lastMoveFromRow][game.lastMoveFromCol] = Piece();
             }
-            // Place the promoted piece
             game.board.board[row][col] = Piece(options[idx], white ? 1 : 0);
             PlaySoundW(L"assets\\sounds\\promote.wav", nullptr, SND_FILENAME | SND_ASYNC);
             reset();

@@ -5,8 +5,8 @@
 #include <array>
 
 struct Piece {
-    std::string name; // e.g. "white_queen"
-    int value;        // e.g. 1 for pawn, 9 for queen, but promoted pawn-queen stays 1
+    std::string name;
+    int value;
     Piece() : name(""), value(0) {}
     Piece(const std::string& n, int v) : name(n), value(v) {}
     bool empty() const { return name.empty(); }
@@ -22,8 +22,8 @@ public:
     int enPassantRow = -1;
     int enPassantCol = -1;
 
-    std::vector<Piece> capturedWhite; // pieces captured by black
-    std::vector<Piece> capturedBlack; // pieces captured by white
+    std::vector<Piece> capturedWhite;
+    std::vector<Piece> capturedBlack;
 
     ChessBoard();
     bool isWhitePiece(const Piece& piece) const;

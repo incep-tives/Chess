@@ -22,7 +22,7 @@
 
 
 
-# This file comes from: https://github.com/conan-io/cmake-conan. Please refer
+# This file comes from: https: github.com/conan-io/cmake-conan. Please refer
 # to this repository for issues and documentation.
 
 # Its purpose is to wrap and launch Conan C/C++ Package Manager when cmake is called.
@@ -950,7 +950,7 @@ function(conan_add_remote)
     # Arguments URL and NAME are required, INDEX, COMMAND and VERIFY_SSL are optional
     # Example usage:
     #    conan_add_remote(NAME bincrafters INDEX 1
-    #       URL https://api.bintray.com/conan/bincrafters/public-conan
+    #       URL https: api.bintray.com/conan/bincrafters/public-conan
     #       VERIFY_SSL True)
     set(oneValueArgs URL NAME INDEX COMMAND VERIFY_SSL)
     cmake_parse_arguments(CONAN "" "${oneValueArgs}" "" ${ARGN})
@@ -979,7 +979,7 @@ macro(conan_config_install)
     # install a full configuration from a local or remote zip file
     # Argument ITEM is required, arguments TYPE, SOURCE, TARGET and VERIFY_SSL are optional
     # Example usage:
-    #    conan_config_install(ITEM https://github.com/conan-io/cmake-conan.git
+    #    conan_config_install(ITEM https: github.com/conan-io/cmake-conan.git
     #       TYPE git SOURCE source-folder TARGET target-folder VERIFY_SSL false)
     set(oneValueArgs ITEM TYPE SOURCE TARGET VERIFY_SSL)
     set(multiValueArgs ARGS)
