@@ -1,5 +1,7 @@
 # Chess
 
+C++ version will no longer be maintained. Will now be using C#
+
 **Open Source Chess program**  
 A C++ chess application featuring classic chess rules with a basic GUI and optional integration with the Stockfish engine.
 
